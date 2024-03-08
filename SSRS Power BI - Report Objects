@@ -1,0 +1,26 @@
+SELECT ItemID -- Unique Identifier
+	, [Path] --Path including object name
+	, [Name] --Just the objectd name
+	, CASE [Type] --Type, an int which can be converted using this case statement.
+		WHEN 1 THEN 'Folder'
+		WHEN 2 THEN 'Report'
+		WHEN 3 THEN 'File'
+		WHEN 4 THEN 'Linked Report'
+		WHEN 5 THEN 'Data Source'
+		WHEN 6 THEN 'Report Model'
+		WHEN 7 THEN 'Report Part'
+		WHEN 8 THEN 'Shared Data Set'
+		WHEN 9 THEN 'Image'
+		WHEN 13 THEN 'Power BI Report'
+		ELSE CAST(Type as varchar(100))
+	  END AS TypeName
+	, [Description] --This is the same information as can be found in the GUI
+	, [Hidden] --Is the object hidden on the screen or not
+	, REPLACE(CreatedBy.UserName, '1upmc-acct\','') CreatedBy
+	, CreationDate
+	, REPLACE(ModifiedBy.UserName, '1upmc-acct\','') ModifiedBy
+	, CTG.ModifiedDate
+FROM ReportServer.dbo.[Catalog] CTG WITH (nolock)
+	JOIN ReportServer.dbo.Users CreatedBy ON CTG.CreatedByID = CreatedBy.UserID
+		AND CreatedBy.UserName <> 'NT AUTHORITY\SYSTEM'
+    JOIN ReportServer.dbo.Users ModifiedBy ON CTG.ModifiedByID = ModifiedBy.UserID
