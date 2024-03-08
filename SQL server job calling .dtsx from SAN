@@ -1,0 +1,8 @@
+   SELECT JobName = J.name	
+        ,JS.step_id, JS.step_name, JS.command	    
+    FROM msdb.dbo.sysjobsteps JS	
+    INNER JOIN msdb.dbo.sysjobs J	
+        ON JS.job_id = J.job_id	
+    WHERE JS.subsystem in ('SSIS','CmdExec')	
+	and JS.command like '%.dtsx%'
+	and js.command not like '/ISSERVER%'
